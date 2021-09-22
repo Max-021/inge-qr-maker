@@ -34,6 +34,11 @@ router.post('/create-qr', async (req, res) => {
     }
 })
 
+router.get('/qr-download', function(req, res){
+    const imgPath = `./public/qrs/municsanmiguel-htallarcade-siemenspolymat2010.png`
+    res.download(imgPath)
+})
+
 const dameLaUrl = (clientPackage) =>{
     let clientePath = 'cliente='+clientPackage.cliente
     let unidadPath = '&unidad='+clientPackage.unidad
