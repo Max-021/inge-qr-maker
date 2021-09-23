@@ -1,11 +1,11 @@
 const express = require('express')
 const path = require('path')
 const router = express.Router()
+const zip = require('express-zip')
 
 const QR = require('../Models/QR')
 const qr_code = require('qrcode')
 
-const baseIngePath = 'https://www.ingeray.com.ar/inge_system/alta-servicio-tecnico?'
 
 router.get('/', async (req, res) => {
     try {
@@ -35,11 +35,16 @@ router.post('/create-qr', async (req, res) => {
 })
 
 router.get('/qr-download', function(req, res){
-    const imgPath = `./public/qrs/municsanmiguel-htallarcade-siemenspolymat2010.png`
-    res.download(imgPath)
+    const imgName = "municsanmiguel-htallarcade-siemenspolymat2010.png"
+    const imgPath = `./public/qrs/${imgName}`
+    res.zip([
+        {path:imgPath, name:imgName},
+        {path:"./public/qrs/clientedeprueba-htaldeprueba-siemenspolymat2010.png", name:"clientedeprueba-htaldeprueba-siemenspolymat2010.png"}
+    ])
 })
 
 const dameLaUrl = (clientPackage) =>{
+    const baseIngePath = 'https://www.ingeray.com.ar/inge_system/alta-servicio-tecnico?'
     let clientePath = 'cliente='+clientPackage.cliente
     let unidadPath = '&unidad='+clientPackage.unidad
     let contactoPath = '&contacto='+clientPackage.contacto
