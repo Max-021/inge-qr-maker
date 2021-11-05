@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const path = require('path')
 const app = express();
+const { handleError } = require('./utils/error');
 
 require('dotenv').config()
 
@@ -20,6 +21,11 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
 
 app.use(morgan('tiny'))
 app.use(cors())
+
+app.use((err, req, res, next) => {
+	handleError(err, res)
+})
+
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use('/qr', require('./routes/qr'));
