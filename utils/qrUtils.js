@@ -34,21 +34,21 @@ const armameUnPaquetitoZip = (reg) => {
         name: fileName
     }
 }
+const creameUnQrObject = (body) => {
+    return {
+        cliente: body.cliente,
+        unidad: body.unidad,
+        telefono: body.telefono,
+        contacto: body.contacto,
+        equipo: body.equipo,
+        uri: dameLaUrl(body),
+        fileName: dameElNombreDeLaImagen(body.cliente, body.unidad, body.equipo)
+    }
+}
 const registraloEnLaDB = (body) => {
-    let cliente = body.cliente
-    let equipo = body.equipo
     return new Promise((resolve, reject) => {
-        if(cliente && equipo){
-            let unidad = body.unidad
-            let qrObject = {
-                cliente,
-                unidad,
-                telefono: body.telefono,
-                contacto: body.contacto,
-                equipo,
-                uri: dameLaUrl(body),
-                fileName: dameElNombreDeLaImagen(cliente, unidad, equipo)
-            }
+        if(body.cliente && body.equipo){
+            let qrObject = creameUnQrObject(body)
             try{
                 const QrDB = new QR(qrObject)
                 QrDB.save()            
@@ -77,10 +77,7 @@ const creameLaImagen = (reg, res) => {
         })
         .catch(err => {
             console.log(err)
-            res.status(500).json({
-                mensaje: 'Ocurrió un error',
-                error: err
-            })
+            throw new ErrorHandler(500, err)
         })
 }
 const registrar_y_crear = (registros, res) => {
@@ -117,7 +114,6 @@ const descargarVarios = (regArray) => {
         if(regArray.length){
             let qrPaquetitos = regArray.map(reg => JSON.stringify(reg)).forEach(reg => {
                 let qrPaquetito = armameUnPaquetitoZip(reg)
-                // qrPaquetitos.push(qrPaquetito)
                 return qrPaquetito
             })
             resolve(qrPaquetitos)
@@ -137,19 +133,19 @@ const borrameTodo = async () => {
 }
 const descargarTodo = async () => {
     let allQrs = await QR.find({})
-    let qrs = []
-    allQrs.forEach(reg => {
-        let paquetitoZip = armameUnPaquetitoZipQR(reg)
-        qrs.push(paquetitoZip)
+    return new Promise((resolve, reject) => {
+        if(allQrs.length){
+            let qrs = allQrs.map(reg => {
+                let paquetitoZip = armameUnPaquetitoZip(reg)
+                return paquetitoZip
+            })
+            resolve(qrs)
+        }else{
+            reject(new Error('No hay codigos para descargar'))
+        }
     })
-    descargarVarios(qrs)
-        .then(codigos => {
-            res.zip(codigos, 'CodigosQR')
-        })
-        .catch(e => {
-            console.log(e)
-            res.status(500).send('No se pudieron descargar los codigos QR')
-        })
+
+
 }
 module.exports = {
     getQrs,
@@ -162,5 +158,6 @@ module.exports = {
     descargarUno,
     registrar_y_crear,
     descargarVarios,
-    armameUnPaquetitoZip
+    armameUnPaquetitoZip,
+    descargarTodo
 }

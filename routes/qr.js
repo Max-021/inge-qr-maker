@@ -43,20 +43,14 @@ router.post('/download', function(req, res){
     res.zip(qrs, 'Codigos QR')
 })
 router.get('/download-all', async function(req, res){
-  let allQrs = await QR.find({})
-  let qrs = []
-  allQrs.forEach(reg => {
-      let paquetitoZip = armameUnPaquetitoZipQR(reg)
-      qrs.push(paquetitoZip)
-  })
-  descargarVarios(qrs)
-    .then(codigos => {
-        res.zip(codigos, 'CodigosQR')
-    })
-    .catch(e => {
-        console.log(e)
-        res.status(500).send('No se pudieron descargar los codigos QR')
-    })
+    qrFuncs.descargarTodo()
+        .then(response => {
+            res.zip(response, 'Codigos QR.zip')
+        })
+        .catch(e => {
+            console.log(e)
+            throw new ErrorHandler(500, e)
+        })
 })
 router.get('/delete-all', function(req, res){
     try{
