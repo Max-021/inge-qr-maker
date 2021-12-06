@@ -1,38 +1,10 @@
-const QR = require('../Models/QR')
-const qr_code = require('qrcode')
-const { ErrorHandler } = require('./error')
+const QR                    = require('../Models/QR')
+const qr_code               = require('qrcode')
+const { ErrorHandler }      = require('./error')
+const format                = require('./formatUtils')
 
 const getQrs = () => {
     return QR.find()
-}
-const dameElStringLimpio = (string) => {
-    if(string){
-        let newString = string.replace(/[\s+,.]/g, "").toLowerCase() //Con esto le saco todos los espacios en blanco, las comas y los puntos
-        return newString
-    }
-}
-const dameElNombreDeLaImagen = (cliente, unidad, equipo) =>{
-    let clienteT = dameElStringLimpio(cliente)
-    let unidadT = dameElStringLimpio(unidad)
-    let equipoT = dameElStringLimpio(equipo)
-
-    return clienteT+'-'+unidadT+'-'+equipoT+'.png'
-}
-const dameLaUrl = (clientPackage) =>{
-    const baseIngePath = 'https://www.ingeray.com.ar/inge_system/alta-servicio-tecnico?'
-    let clientePath = 'cliente='+clientPackage.cliente
-    let unidadPath = '&unidad='+clientPackage.unidad
-    let contactoPath = '&contacto='+clientPackage.contacto
-    let telefonoPath = '&telefono='+clientPackage.telefono
-    let equipoPath = '&equipo='+clientPackage.equipo
-    return baseIngePath+clientePath+unidadPath+contactoPath+telefonoPath+equipoPath
-}
-const armameUnPaquetitoZip = (reg) => {
-    let fileName = dameElNombreDeLaImagen(reg.cliente, reg.unidad, reg.equipo)
-    return {
-        path: `./public/qrs/${fileName}`,
-        name: fileName
-    }
 }
 const creameUnQrObject = (body) => {
     return {
@@ -41,8 +13,8 @@ const creameUnQrObject = (body) => {
         telefono: body.telefono,
         contacto: body.contacto,
         equipo: body.equipo,
-        uri: dameLaUrl(body),
-        fileName: dameElNombreDeLaImagen(body.cliente, body.unidad, body.equipo)
+        uri: format.dameLaUrl(body),
+        fileName: format.dameElNombreDeLaImagen(body.cliente, body.unidad, body.equipo)
     }
 }
 const registraloEnLaDB = (body) => {
@@ -91,29 +63,21 @@ const registrar_y_crear = (registros, res) => {
                     res.status(500).send('Falta completar el cliente o el equipo')
                 }
             })
-            resolve(dameUnArrayFormateado(registros))
+            resolve(format.dameUnArrayFormateado(registros))
         } else {
             reject(new Error('No hay registros para crear los codigos'))
         }
     })
 }
-const dameUnArrayFormateado = (array) => {
-    let zipArray = []
-    array.forEach(reg => {
-        let paquetito = armameUnPaquetitoZip(reg)
-        zipArray.push(paquetito)
-    })
-    return zipArray
-}
 const descargarUno = (res, reg) => {
-    let qrPaquetito = armameUnPaquetitoZip(reg)
+    let qrPaquetito = format.armameUnPaquetitoZip(reg)
     res.zip(qrPaquetito)
 }
 const descargarVarios = (regArray) => {
     return new Promise((resolve, reject) => {
         if(regArray.length){
             let qrPaquetitos = regArray.map(reg => JSON.stringify(reg)).forEach(reg => {
-                let qrPaquetito = armameUnPaquetitoZip(reg)
+                let qrPaquetito = format.armameUnPaquetitoZip(reg)
                 return qrPaquetito
             })
             resolve(qrPaquetitos)
@@ -122,7 +86,7 @@ const descargarVarios = (regArray) => {
         }
     })
 }
-const borrameTodo = async () => {
+const borraTodaLaDB = async () => {
     QR.deleteMany({})
         .then(function(){
             console.log('Todo borrado :D')
@@ -131,12 +95,12 @@ const borrameTodo = async () => {
             console.log('ups, no pude borrar nada')
         })
 }
-const descargarTodo = async () => {
+const dameTodosLosQRParaDescargar = async () => {
     let allQrs = await QR.find({})
     return new Promise((resolve, reject) => {
         if(allQrs.length){
             let qrs = allQrs.map(reg => {
-                let paquetitoZip = armameUnPaquetitoZip(reg)
+                let paquetitoZip = format.armameUnPaquetitoZip(reg)
                 return paquetitoZip
             })
             resolve(qrs)
@@ -147,17 +111,20 @@ const descargarTodo = async () => {
 
 
 }
+const dameEsteRegistro = async (id) => {
+    let qr = await QR.findById({_id: id}).exec()
+    // console.log(qr) 
+    return qr
+}
+
 module.exports = {
     getQrs,
-    dameLaUrl,
-    dameElNombreDeLaImagen,
-    dameElStringLimpio,
     registraloEnLaDB,
     creameLaImagen,
-    borrameTodo,
+    borraTodaLaDB,
     descargarUno,
     registrar_y_crear,
     descargarVarios,
-    armameUnPaquetitoZip,
-    descargarTodo
+    dameTodosLosQRParaDescargar,
+    dameEsteRegistro
 }

@@ -2,7 +2,10 @@ const express = require('express')
 const { ErrorHandler } = require('../utils/error')
 const router = express.Router()
 const qrFuncs = require('../utils/qrUtils')
+const format = require('../utils/formatUtils')
 var zip = require('express-zip');
+const fs = require('fs')
+const cors = require('cors')
 
 router.get('/', async (req, res) => {
     try {
@@ -13,6 +16,52 @@ router.get('/', async (req, res) => {
         throw new ErrorHandler(500, 'Servidor no disponible')
     }
 })
+
+router.get('/download-all', async function(req, res){
+    qrFuncs.dameTodosLosQRParaDescargar()
+        .then(response => {
+            res.zip(response, 'Codigos QR.zip')
+        })
+        .catch(e => {
+            console.log(e)
+            throw new ErrorHandler(500, e)
+        })
+})
+
+router.get('/download/:id', cors({exposedHeaders: ['Content-Disposition'],}), async (req, res) => {
+    try{
+        const qrD = await qrFuncs.dameEsteRegistro(req.params.id)
+        const fileName = qrD.fileName
+        const filePath = `./public/qrs/${fileName}`
+        const stream = fs.createReadStream(filePath)
+        res.set({
+            'Content-Disposition':`attachment; filename=${fileName}`,
+            'Content-Type':'image/png',
+            'Name':fileName
+        })
+        res.set('Access-Control-Expose-Headers', 'Name')
+        stream.on('open', function(){
+            stream.pipe(res)
+        })
+        stream.on('error', function(e){
+            res.end(e)
+        })
+    } catch(e){
+        console.log(e)
+        res.status(500).send('Error tratando de obtener este registro')
+    }
+})
+
+router.get('/delete-all', function(req, res){
+    try{
+        qrFuncs.borraTodaLaDB()
+        res.status(200).redirect('/qr/')
+    } catch (e){
+        console.log(e)
+        throw new ErrorHandler(500, 'Error borrando todo: ' + e)
+    }
+})
+
 router.post('/create', (req, res) => {
     try {
         let registros = req.body
@@ -26,40 +75,19 @@ router.post('/create', (req, res) => {
                 })
                 .catch(e => {
                     console.log(e)
-                    throw new ErrorHandler(500, 'Hubo un problema con la creacion de los Codigos QR')
+                    throw new ErrorHandler(500, 'Hubo un problema al crear los Codigos QR')
                 })
         } else {
             throw new ErrorHandler(400, 'No se enviaron registros para crear códigos')
         }
     } catch (error) {
-        throw new ErrorHandler(500, 'Hubo un problema con la creacion de los Codigos QR. Error: '+error)
+        throw new ErrorHandler(500, 'No se pudieron crear los Codigos QR. Error: '+error)
     }
 })
-router.get('/dowload/:id', function(req, res){
-    //TODO: Implementar esto 
-})
+
 router.post('/download', function(req, res){
     let qrs = req.body
     res.zip(qrs, 'Codigos QR')
-})
-router.get('/download-all', async function(req, res){
-    qrFuncs.descargarTodo()
-        .then(response => {
-            res.zip(response, 'Codigos QR.zip')
-        })
-        .catch(e => {
-            console.log(e)
-            throw new ErrorHandler(500, e)
-        })
-})
-router.get('/delete-all', function(req, res){
-    try{
-        qrFuncs.borrameTodo()
-        res.status(200).redirect('/qr/')
-    } catch (e){
-        console.log(e)
-        throw new ErrorHandler(500, 'Error borrando todo: ' + e)
-    }
 })
 
 module.exports = router

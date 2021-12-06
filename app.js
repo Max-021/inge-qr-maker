@@ -32,9 +32,10 @@ app.use('/qr', require('./routes/qr'));
 
 const history = require('connect-history-api-fallback');
 app.use(history())
-app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
+app.use('/qrs', express.static('qrs'))
 
 app.listen(port, function(){
 	console.clear()
-	console.log('Escuchando en el puerto http://localhost:'+process.env.PORT)
+	console.log('Escuchando en el puerto http://localhost:'+port)
 })
