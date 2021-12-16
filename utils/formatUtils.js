@@ -1,6 +1,6 @@
 const dameElStringLimpio = (string) => {
     if(string){
-        let newString = string.replace(/[\s+,.]/g, "").toLowerCase() //Con esto le saco todos los espacios en blanco, las comas y los puntos
+        let newString = string.replace(/[\s+,./]/g, "").toLowerCase() //Con esto le saco todos los espacios en blanco, las comas y los puntos
         return newString
     }
 }

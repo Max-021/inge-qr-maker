@@ -14,8 +14,8 @@ const uri = `mongodb+srv://${process.env.USERNAME}:${process.env.PASS}@ingeray-q
 
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
 	.then(() => {
-		console.log('BASE READY PARA TIRAR QRS PAAA')
-		console.log('##################################################################################')
+		console.log('App lista para crear códigos QR')
+		console.log('################################################################################')
 	})
 	.catch(error => {console.log(error)})
 
