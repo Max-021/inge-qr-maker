@@ -7,7 +7,7 @@ var zip = require('express-zip');
 const fs = require('fs')
 const cors = require('cors')
 
-router.get('/', async (req, res) => {
+router.get('/', async function(req, res) {
     try {
         const arrayQrs = await qrFuncs.getQrs()
         res.send(arrayQrs)
@@ -28,7 +28,7 @@ router.get('/download-all', async function(req, res){
         })
 })
 
-router.get('/download/:id', cors({exposedHeaders: ['Content-Disposition'],}), async (req, res) => {
+router.get('/download/:id', cors({exposedHeaders: ['Content-Disposition'],}), async function(req, res){
     try{
         const qrD = await qrFuncs.dameEsteRegistro(req.params.id)
         const fileName = qrD.fileName
@@ -62,7 +62,7 @@ router.get('/delete-all', function(req, res){
     }
 })
 
-router.post('/create', (req, res) => {
+router.post('/create', function(req, res){
     try {
         let registros = req.body
         if(registros.length){
@@ -82,6 +82,20 @@ router.post('/create', (req, res) => {
         }
     } catch (error) {
         throw new ErrorHandler(500, 'No se pudieron crear los Codigos QR. Error: '+error)
+    }
+})
+
+router.post('/prepare-array', function(req, res){
+    try{
+        let registros = req.body
+        if(registros.length){
+            let paquetitoZip = format.dameUnArrayFormateado(registros)
+            res.status(201).json(paquetitoZip)
+        } else {
+            throw new ErrorHandler(500, 'No se enviaron registros para crear códigos')
+        }
+    } catch (e) {
+        throw new ErrorHandler(500, 'No se pudo crear el array para descargar de zip')
     }
 })
 
