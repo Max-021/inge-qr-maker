@@ -10,8 +10,8 @@ const creameUnQrObject = (body) => {
     return {
         cliente: body.cliente,
         unidad: body.unidad,
-        telefono: body.telefono,
-        contacto: body.contacto,
+        // telefono: body.telefono,
+        // contacto: body.contacto,
         equipo: body.equipo,
         uri: format.dameLaUrl(body),
         fileName: format.dameElNombreDeLaImagen(body.cliente, body.unidad, body.equipo)

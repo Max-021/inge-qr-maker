@@ -15,10 +15,10 @@ const dameLaUrl = (clientPackage) =>{
     const baseIngePath = 'https://www.ingeray.com.ar/inge_system/alta-servicio-tecnico?'
     let clientePath = 'cliente='+clientPackage.cliente
     let unidadPath = '&unidad='+clientPackage.unidad
-    let contactoPath = '&contacto='+clientPackage.contacto
-    let telefonoPath = '&telefono='+clientPackage.telefono
+    // let contactoPath = '&contacto='+clientPackage.contacto
+    // let telefonoPath = '&telefono='+clientPackage.telefono
     let equipoPath = '&equipo='+clientPackage.equipo
-    return baseIngePath+clientePath+unidadPath+contactoPath+telefonoPath+equipoPath
+    return baseIngePath+clientePath+unidadPath+equipoPath
 }
 const armameUnPaquetitoZip = (reg) => {
     let fileName = dameElNombreDeLaImagen(reg.cliente, reg.unidad, reg.equipo)

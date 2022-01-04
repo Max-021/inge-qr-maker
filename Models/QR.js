@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 const qrSchema = new Schema({
     cliente: String,
     unidad: String,
-    contacto: String,
-    telefono: String,
+    // contacto: String,
+    // telefono: String,
     equipo: String,
     uri: String,
     fileName: String
