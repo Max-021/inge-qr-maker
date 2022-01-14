@@ -2,10 +2,29 @@ const express = require('express')
 const { ErrorHandler } = require('../utils/error')
 const router = express.Router()
 const qrFuncs = require('../utils/qrUtils')
+const userFuncs = require('../utils/usersUtils')
 const format = require('../utils/formatUtils')
 var zip = require('express-zip');
 const fs = require('fs')
 const cors = require('cors')
+const jwt = require('jsonwebtoken')
+
+router.use(function (req, res, next) {
+    const token = req.headers['access-token'];
+    if(token){
+        jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+            if(err){
+                res.status(401).send({message:'Token inválida'})
+            } else {
+                res.setHeader('access-token', token)
+                req.decoded = decoded;
+                next();
+            }
+        })
+    } else {
+        res.status(401).send({message:'Hace falta un token de autenticación'})
+    }
+})
 
 router.get('/', async function(req, res) {
     try {
@@ -16,7 +35,6 @@ router.get('/', async function(req, res) {
         throw new ErrorHandler(500, 'Servidor no disponible')
     }
 })
-
 router.get('/download-all', async function(req, res){
     qrFuncs.dameTodosLosQRParaDescargar()
         .then(response => {
@@ -27,7 +45,6 @@ router.get('/download-all', async function(req, res){
             throw new ErrorHandler(500, e)
         })
 })
-
 router.get('/download/:id', cors({exposedHeaders: ['Content-Disposition'],}), async function(req, res){
     try{
         const qrD = await qrFuncs.dameEsteRegistro(req.params.id)
@@ -51,7 +68,6 @@ router.get('/download/:id', cors({exposedHeaders: ['Content-Disposition'],}), as
         res.status(500).send('Error tratando de obtener este registro')
     }
 })
-
 router.get('/delete-all', function(req, res){
     try{
         qrFuncs.borraTodaLaDB()
@@ -61,7 +77,6 @@ router.get('/delete-all', function(req, res){
         throw new ErrorHandler(500, 'Error borrando todo: ' + e)
     }
 })
-
 router.post('/create', function(req, res){
     try {
         let registros = req.body
@@ -84,7 +99,6 @@ router.post('/create', function(req, res){
         throw new ErrorHandler(500, 'No se pudieron crear los Codigos QR. Error: '+error)
     }
 })
-
 router.post('/prepare-array', function(req, res){
     try{
         let registros = req.body
@@ -98,10 +112,16 @@ router.post('/prepare-array', function(req, res){
         throw new ErrorHandler(500, 'No se pudo crear el array para descargar de zip')
     }
 })
-
 router.post('/download', function(req, res){
     let qrs = req.body
     res.zip(qrs, 'Codigos QR')
 })
-
+router.get('/users', async function(req, res){
+	try{
+		let usuarios = await userFuncs.getUsuarios()
+		res.send(usuarios)
+	} catch(e) {
+		console.log(e)
+	}
+})
 module.exports = router
