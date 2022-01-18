@@ -51,14 +51,15 @@ app.post('/authenticate', async function(req, res){
 })
 
 //? Verifiacion del token
-app.post('/verify', function(req, res){
+app.post('/verify', async function(req, res){
 	let tokenPartido = req.body.token.split(' ', 2)
 	let username = tokenPartido[0]
 	let token = tokenPartido[1]
-	let resultadoAutenticacion = authentication.verificarToken(username, token)
-	resultadoAutenticacion ? 
-		res.status(200).send({message: 'Token verificado correctamente', isValidated: true}) :
-		res.status(401).send({message: 'El token es invalido, puede ser que haya caducado', isValidated: false})
+	let resultadoAutenticacion = await authentication.verificarToken(username, token)
+    
+    resultadoAutenticacion.validated ? 
+		res.send({message: resultadoAutenticacion.message, isValidated: true}) :
+		res.send({message: resultadoAutenticacion.message, isValidated: false})
 })
 
 //? Endpoints de la API

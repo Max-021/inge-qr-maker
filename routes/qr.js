@@ -14,15 +14,17 @@ router.use(function (req, res, next) {
     if(token){
         jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
             if(err){
-                res.status(401).send({message:'Token inválida'})
+                console.log('Token invalido')
+                res.status(401).send({message:'Token caducada'})
             } else {
+                console.log('Token ok')
                 res.setHeader('access-token', token)
                 req.decoded = decoded;
                 next();
             }
         })
     } else {
-        res.status(401).send({message:'Hace falta un token de autenticación'})
+        res.send({message:'Hace falta un token de autenticación'})
     }
 })
 

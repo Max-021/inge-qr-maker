@@ -25,7 +25,15 @@ const asignarTokenAlUsuario = async function(username_, token){
 }
 const verificarTokenUsuario = async function(username_, token){
     let usuario = await User.findOne({username: username_}).exec()
-    return usuario.token === token
+    if(usuario){
+        let message = usuario.token === token ? 
+            `Token del usuario ${username_} verificado correctamente` :
+            `Token no verificado para el usuario ${username_}`
+        return {message, verificado: usuario.token === token}
+    } else {
+        return {message:`No existe el usuario ${username_}`, verificado: false}
+    }
+
 }
 
 module.exports = {
