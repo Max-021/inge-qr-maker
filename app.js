@@ -34,6 +34,7 @@ app.use(express.urlencoded({extended: true}))
 app.post('/authenticate', async function(req, res){
     try{
         let token = await authentication.autenticarUsuario(req.body)
+        console.log(`Este es el token que voy a devolver: ${token}`)
         if(token !== null){
             res.json({
                 message: 'Autenticacion correcta',

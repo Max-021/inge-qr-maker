@@ -3,6 +3,7 @@ const userFuncs = require('./usersUtils')
 
 const autenticarUsuario = async function(user){
     let token = null
+    console.log(user.username)
     let existe = await userFuncs.existeElUsuario(user.username)
     if(existe){
         const payload = {
@@ -11,6 +12,7 @@ const autenticarUsuario = async function(user){
         token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {expiresIn: '15m'})
         userFuncs.asignarTokenAlUsuario(user.username, token)
     } 
+    console.log(`Este es el token para ${user.username}: `+token)
     return token
 }
 

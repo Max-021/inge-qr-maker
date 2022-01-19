@@ -12,7 +12,7 @@ const asignarTokenAlUsuario = async function(username_, token){
     try{
         const filtro = {username: username_}
         const update = {token}
-
+        console.log(`Le asigno el token ${token} al usuario ${username_}`)
         let response = await User.findOneAndUpdate(filtro, update, {rawResult: true})
 
         response.lastErrorObject.updatedExisting ? 
