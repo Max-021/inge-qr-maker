@@ -19,10 +19,6 @@ router.use(function (req, res, next) {
             } else {
                 console.log('Token ok')
                 res.setHeader('access-token', token)
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-                res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-                res.setHeader('Access-Control-Allow-Credentials', true);                
                 req.decoded = decoded;
                 next();
             }
