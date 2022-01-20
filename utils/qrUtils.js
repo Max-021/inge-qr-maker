@@ -97,6 +97,8 @@ const borraTodaLaDB = async () => {
 }
 const dameTodosLosQRParaDescargar = async () => {
     let allQrs = await QR.find({})
+    console.log('Estos son todos los QR para descargar')
+    console.log(allQrs)
     return new Promise((resolve, reject) => {
         if(allQrs.length){
             let qrs = allQrs.map(reg => {

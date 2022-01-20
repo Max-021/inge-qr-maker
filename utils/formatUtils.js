@@ -21,6 +21,7 @@ const dameLaUrl = (clientPackage) =>{
     return baseIngePath+clientePath+unidadPath+equipoPath
 }
 const armameUnPaquetitoZip = (reg) => {
+    console.log('Armo un paquetito zip para: '+reg)
     let fileName = dameElNombreDeLaImagen(reg.cliente, reg.unidad, reg.equipo)
     return {
         path: `./public/qrs/${fileName}`,

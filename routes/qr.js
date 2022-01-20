@@ -38,8 +38,11 @@ router.get('/', async function(req, res) {
     }
 })
 router.get('/download-all', async function(req, res){
+    console.log('Pido que me descargue todos los qr')
     qrFuncs.dameTodosLosQRParaDescargar()
         .then(response => {
+            console.log('Me dió todos los QR, ahora hay que hacer el .zip')
+            console.log(response)
             res.zip(response, 'Codigos QR.zip')
         })
         .catch(e => {
