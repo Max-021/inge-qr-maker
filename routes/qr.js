@@ -10,6 +10,10 @@ const cors = require('cors')
 const jwt = require('jsonwebtoken')
 
 router.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
     const token = req.headers['access-token'];
     if(token){
         jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
