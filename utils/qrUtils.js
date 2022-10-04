@@ -35,7 +35,11 @@ const registraloEnLaDB = (body) => {
     })   
 }
 const creameLaImagen = (reg, res) => {
-    qr_code.toDataURL(reg.uri)
+    const options = {
+        errorCorrectionLevel: 'Q',
+    }
+
+    qr_code.toDataURL(reg.uri,options)
         .then(imgCode => {
             const imgPath = 'public/qrs/'+reg.fileName
             qr_code.toFile(imgPath, reg.uri)

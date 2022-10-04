@@ -11,9 +11,10 @@ require('dotenv').config()
 const port = process.env.PORT || 3000
 
 const mongoose = require('mongoose')
-
+//originales
 const uriDev = `mongodb+srv://${process.env.USERNAME}:${process.env.PASS}@ingeray-qr-code.5oyjr.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`
 const uriProd = `mongodb+srv://${process.env.USERNAME}:${process.env.PASS}@ingeray-qr-code.3g8ej.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`
+
 let uri = process.env.NODE_ENV === 'production' ? uriProd : uriDev
 
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
