@@ -107,7 +107,7 @@ router.post('/create', function(req, res){
 router.post('/prepare-array', function(req, res){
     try{
         let registros = req.body
-        console.log(registros)
+        console.log('los registros'+registros)
         if(registros.length){
             let paquetitoZip = format.dameUnArrayFormateado(registros)
             res.status(201).json(paquetitoZip)
