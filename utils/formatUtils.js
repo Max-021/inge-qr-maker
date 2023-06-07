@@ -21,7 +21,8 @@ const dameLaUrl = (clientPackage) =>{
     return baseIngePath+clientePath+unidadPath+equipoPath
 }
 const armameUnPaquetitoZip = (reg) => {
-    console.log('Armo un paquetito zip para: '+reg)
+    console.log('Armo un paquetito zip para: ')
+    console.log(reg)
     let fileName = dameElNombreDeLaImagen(reg.cliente, reg.unidad, reg.equipo)
     return {
         path: `./public/qrs/${fileName}`,
@@ -30,11 +31,8 @@ const armameUnPaquetitoZip = (reg) => {
 }
 const dameUnArrayFormateado = (array) => {
     let zipArray = []
-    console.log('el array'+array)
     array.forEach(reg => {
-        console.log('el reg'+reg)
         let paquetito = armameUnPaquetitoZip(reg)
-        console.log('paquetito' + paquetito)
         zipArray.push(paquetito)
     })
     return zipArray
