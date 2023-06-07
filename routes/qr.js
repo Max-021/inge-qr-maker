@@ -119,6 +119,7 @@ router.post('/prepare-array', function(req, res){
 })
 router.post('/download', function(req, res){
     let qrs = req.body
+    console.log(req.body)
     res.zip(qrs, 'Codigos QR')
 })
 router.get('/users', async function(req, res){
