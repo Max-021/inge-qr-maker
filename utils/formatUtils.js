@@ -30,8 +30,11 @@ const armameUnPaquetitoZip = (reg) => {
 }
 const dameUnArrayFormateado = (array) => {
     let zipArray = []
+    console.log(array)
     array.forEach(reg => {
+        console.log(reg)
         let paquetito = armameUnPaquetitoZip(reg)
+        console.log('paquetito' + paquetito)
         zipArray.push(paquetito)
     })
     return zipArray
