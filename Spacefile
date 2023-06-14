@@ -6,4 +6,5 @@ micros:
     engine: nodejs16
     primary: true
     public: true
-    cors: true
+  routes:
+    - cors: true
