@@ -25,7 +25,19 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
 	.catch(error => {console.log(error)})
 
 app.use(morgan('tiny'))
-app.use(cors())
+app.use(cors({
+    origin:true,
+    optionsSuccessStatus:200,
+    credentials:true,
+}));
+app.options(
+    '*',
+    cors({
+        origin:true,
+        optionsSuccessStatus:200,
+        credentials: true,
+    })
+)
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
