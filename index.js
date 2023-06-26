@@ -26,8 +26,8 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
 
 app.use(morgan('tiny'))
 app.use(cors({
-    origin: '*',
-    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH','OPTIONS']
+    credentials: true,
+    origin: true,
 }))
 
 app.use((req, res, next) => {
